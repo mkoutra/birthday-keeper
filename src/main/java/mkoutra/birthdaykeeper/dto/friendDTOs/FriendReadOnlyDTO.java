@@ -1,4 +1,4 @@
-package mkoutra.birthdaykeeper.dto.friendsDTOs;
+package mkoutra.birthdaykeeper.dto.friendDTOs;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ToString
 public class FriendReadOnlyDTO {
-    private String uuid;
+    private String id;
     private String firstname;
     private String lastname;
     private String nickname;

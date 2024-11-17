@@ -1,4 +1,4 @@
-package mkoutra.birthdaykeeper.dto.friendsDTOs;
+package mkoutra.birthdaykeeper.dto.friendDTOs;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Past;
@@ -12,9 +12,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class FriendUpdateDTO {
-    @NotEmpty(message = "UUID must not be empty")
-    private String uuid;
+public class FriendInsertDTO {
+    @NotEmpty(message = "Username must not be empty.")
+    private String username;    // TODO: retrieve it from SecurityContext
 
     @NotEmpty(message = "First name must not be empty.")
     @Size(max = 40, message = "First name must contain less than 40 characters.")

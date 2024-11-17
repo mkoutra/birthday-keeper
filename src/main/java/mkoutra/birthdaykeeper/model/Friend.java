@@ -28,4 +28,8 @@ public class Friend extends AbstractEntity {
 
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
