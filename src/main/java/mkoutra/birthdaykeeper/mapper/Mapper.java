@@ -18,22 +18,22 @@ public class Mapper {
     private final UserRepository userRepository;
 
     public Friend mapToFriend(FriendInsertDTO dto) {
-        User user =  userRepository.findUserByUsername(dto.getUsername()).orElse(null);
-
-        return new Friend(null, dto.getFirstname(), dto.getLastname(), dto.getNickname(),
-                dto.getDateOfBirth(), user);
+        Friend friend = new Friend();
+        friend.setFirstname(dto.getFirstname());
+        friend.setLastname(dto.getLastname());
+        friend.setNickname(dto.getNickname());
+        friend.setDateOfBirth(dto.getDateOfBirth());
+        return friend;
     }
 
     public Friend mapToFriend(FriendUpdateDTO dto) {
-        User user =  userRepository.findUserByUsername(dto.getUsername()).orElse(null);
-
         return new Friend(
                 Long.parseLong(dto.getId()),
                 dto.getFirstname(),
                 dto.getLastname(),
                 dto.getNickname(),
                 dto.getDateOfBirth(),
-                user
+                null
         );
     }
 

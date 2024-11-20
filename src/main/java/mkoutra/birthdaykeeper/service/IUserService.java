@@ -6,4 +6,5 @@ import mkoutra.birthdaykeeper.dto.userDTOs.UserReadOnlyDTO;
 
 public interface IUserService {
     UserReadOnlyDTO saveUser(UserInsertDTO userInsertDTO) throws EntityAlreadyExistsException;
+    
 }

@@ -10,6 +10,7 @@ import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
 import mkoutra.birthdaykeeper.mapper.Mapper;
 import mkoutra.birthdaykeeper.model.Friend;
+import mkoutra.birthdaykeeper.model.User;
 import mkoutra.birthdaykeeper.repository.FriendRepository;
 import mkoutra.birthdaykeeper.repository.UserRepository;
 import org.slf4j.Logger;
@@ -30,22 +31,42 @@ public class FriendService implements IFriendService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public FriendReadOnlyDTO saveFriend(FriendInsertDTO friendInsertDTO)
-            throws EntityAlreadyExistsException, EntityInvalidArgumentException {
+            throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
 
         String firstname = friendInsertDTO.getFirstname();
         String lastname = friendInsertDTO.getLastname();
-
         try {
-            if (friendRepository.findFriendByFirstnameAndLastname(firstname, lastname).isPresent()) {
+            User user = userRepository
+                    .findUserByUsername(friendInsertDTO.getUsername())
+                    .orElseThrow(() -> new EntityNotFoundException("User", "User " + friendInsertDTO.getUsername() + " does not exist."));
+
+            if (friendRepository.findFriendByFirstnameAndLastnameAndUserId(firstname, lastname, user.getId()).isPresent()) {
                 throw new EntityAlreadyExistsException("Friend", "Friend:" + firstname + " " + lastname + " already exists.");
             }
 
             Friend friend = mapper.mapToFriend(friendInsertDTO);
-            FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friendRepository.save(friend));
+
+            user.addFriend(friend);                 // Covers both user -> friend and friend -> user relation.
+            friend = friendRepository.save(friend);
+
+            /*
+            * There is no need to also save the user entity because we changed nothing on user.
+            * I added `userRepository.save(user)` and nothing appears on the hibernate logs.
+            * On the other hand, if we change user's password and then execute
+            * `userRepository.save(user)`, we see in the logs that user is updated.
+            *
+            * We prefer `friend = friendRepository.save(friend)` because it returns the friend
+            *  we the id given by the database.
+            * */
+
+            FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friend);
             LOGGER.info("Friend {} {} inserted.", friendReadOnlyDTO.getFirstname(), friendReadOnlyDTO.getLastname());
             return friendReadOnlyDTO;
         } catch (EntityAlreadyExistsException e) {
             LOGGER.error("Friend {} {} already exists.", firstname, lastname);
+            throw e;
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("User with username: {} does not exist. Unable to insert friend.", friendInsertDTO.getUsername());
             throw e;
         }
     }
@@ -55,22 +76,25 @@ public class FriendService implements IFriendService {
     public FriendReadOnlyDTO updateFriend(FriendUpdateDTO friendUpdateDTO)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
         try {
-            if (userRepository.findUserByUsername(friendUpdateDTO.getUsername()).isEmpty()) {
-                throw new EntityNotFoundException("User", "User with username: " + friendUpdateDTO.getUsername() + " does not exist.");
-            }
 
-            if (friendRepository.findFriendByUuid(friendUpdateDTO.getId()).isEmpty()) {
+            User user = userRepository.findUserByUsername(friendUpdateDTO.getUsername())
+                    .orElseThrow(() -> new EntityNotFoundException("User", "User " + friendUpdateDTO.getUsername() + " does not exist."));
+
+            if (friendRepository.findById(Long.parseLong(friendUpdateDTO.getId())).isEmpty()) {
                 throw new EntityNotFoundException("Friend", "Friend with Id " + friendUpdateDTO.getId() + " does not exist.");
             }
-            if (friendRepository.findFriendByFirstnameAndLastname(friendUpdateDTO.getFirstname(), friendUpdateDTO.getLastname()).isPresent()) {
-                throw new EntityAlreadyExistsException("Friend", "Friend with " + friendUpdateDTO.getFirstname() + " and " + friendUpdateDTO.getLastname() + " already exists.");
-            }
+
+//            if (friendRepository.findFriendByFirstnameAndLastnameAndUserId(
+//                    friendUpdateDTO.getFirstname(), friendUpdateDTO.getLastname(), user.getId()).isPresent())
+//            {
+//                throw new EntityAlreadyExistsException("Friend", "Friend with " + friendUpdateDTO.getFirstname() + " and " + friendUpdateDTO.getLastname() + " already exists.");
+//            }
 
             Friend friend = mapper.mapToFriend(friendUpdateDTO);
             FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friendRepository.save(friend));
             LOGGER.info("Friend {} {} updated.", friendReadOnlyDTO.getFirstname(), friendReadOnlyDTO.getLastname());
             return friendReadOnlyDTO;
-        } catch (EntityNotFoundException | EntityAlreadyExistsException e) {
+        } catch (EntityNotFoundException e) {
             LOGGER.error("{} Error: {}", e.getCode(), e.getMessage());
             throw e;
         }
@@ -106,15 +130,15 @@ public class FriendService implements IFriendService {
         }
     }
 
-    @Override
-    @Transactional(rollbackOn = Exception.class)
-    public List<FriendReadOnlyDTO> getFriendsByDateOfBirthMonth(Short month) {
-        return friendRepository
-                .findFriendsByDateOfBirth_Month(month)
-                .stream()
-                .map(mapper::mapToFriendReadOnlyDTO)
-                .toList();
-    }
+//    @Override
+//    @Transactional(rollbackOn = Exception.class)
+//    public List<FriendReadOnlyDTO> getFriendsByDateOfBirthMonth(Short month) {
+//        return friendRepository
+//                .findFriendsByDateOfBirth_Month(month)
+//                .stream()
+//                .map(mapper::mapToFriendReadOnlyDTO)
+//                .toList();
+//    }
 
     @Override
     @Transactional(rollbackOn = Exception.class)

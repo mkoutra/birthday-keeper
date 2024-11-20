@@ -11,13 +11,13 @@ import java.util.List;
 
 public interface IFriendService {
     FriendReadOnlyDTO saveFriend(FriendInsertDTO friendInsertDTO)
-            throws EntityAlreadyExistsException, EntityInvalidArgumentException;
+            throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException;
 
     FriendReadOnlyDTO updateFriend(FriendUpdateDTO friendUpdateDTO)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException;
 
     FriendReadOnlyDTO getFriendById(Long id) throws EntityNotFoundException;
     FriendReadOnlyDTO deleteFriend(Long id) throws EntityNotFoundException;
-    List<FriendReadOnlyDTO> getFriendsByDateOfBirthMonth(Short month);
+//    List<FriendReadOnlyDTO> getFriendsByDateOfBirthMonth(Short month);
     List<FriendReadOnlyDTO> getAllFriends();
 }

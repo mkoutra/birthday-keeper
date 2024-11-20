@@ -11,7 +11,6 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "users")
 public class User extends AbstractEntity {
@@ -25,8 +24,8 @@ public class User extends AbstractEntity {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")
     @Getter(value = AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Friend> friends = new HashSet<>();
 
     public Set<Friend> getAllFriends() {
@@ -34,18 +33,16 @@ public class User extends AbstractEntity {
     }
 
     public void addFriend(Friend friend) {
-        if (friends == null) {
-            friends = new HashSet<>();
+        if (friend != null) {
+            friends.add(friend);
+            friend.setUser(this);
         }
-        friends.add(friend);
-        friend.setUser(this);
     }
 
     public void removeFriend(Friend friend) {
-        if (friend == null) {
-            return;
+        if (friend != null) {
+            friend.setUser(null);
+            friends.remove(friend);
         }
-        friends.remove(friend);
-        friend.setUser(null);
     }
 }
