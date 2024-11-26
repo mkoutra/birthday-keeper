@@ -1,6 +1,5 @@
 package mkoutra.birthdaykeeper.repository;
 
-import mkoutra.birthdaykeeper.model.Friend;
 import mkoutra.birthdaykeeper.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

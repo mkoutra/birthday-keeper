@@ -52,12 +52,10 @@ public class Mapper {
     }
 
     public User mapToUser(UserInsertDTO userInsertDTO) {
-        return new User(
-                null,
-                userInsertDTO.getUsername(),
-                "Hashed: " + userInsertDTO.getPassword(), // TODO: Add Hashing
-                null
-        );
+        User user = new User();
+        user.setUsername(userInsertDTO.getUsername());
+        user.setPassword("Hashed: " + userInsertDTO.getPassword()); // TODO: Add Hashing
+        return user;
     }
 
     public UserReadOnlyDTO mapToUserReadOnlyDTO(User user) {

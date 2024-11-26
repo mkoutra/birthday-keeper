@@ -6,17 +6,13 @@ import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityInvalidArgumentException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
-import mkoutra.birthdaykeeper.dto.userDTOs.UserInsertDTO;
+import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
 import mkoutra.birthdaykeeper.service.IFriendService;
-import mkoutra.birthdaykeeper.service.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/friend")
@@ -32,6 +28,17 @@ public class FriendRestController {
             BindingResult bindingResult) throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
 
         FriendReadOnlyDTO friendReadOnlyDTO = friendService.saveFriend(friendInsertDTO);
+
+        return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("/")
+    public ResponseEntity<FriendReadOnlyDTO> updateFriend(
+            @Valid @RequestBody FriendUpdateDTO friendUpdateDTO,
+            BindingResult bindingResult
+            ) throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException{
+
+        FriendReadOnlyDTO friendReadOnlyDTO = friendService.updateFriend(friendUpdateDTO);
 
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
