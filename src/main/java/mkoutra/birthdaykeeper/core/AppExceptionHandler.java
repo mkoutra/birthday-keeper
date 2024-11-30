@@ -42,7 +42,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
             httpStatus = HttpStatus.NOT_FOUND;
         }
 
-        return new ResponseEntity<ErrorResponseDTO>(errorResponseDTO, httpStatus);
+        return new ResponseEntity<>(errorResponseDTO, httpStatus);
     }
 
 }
