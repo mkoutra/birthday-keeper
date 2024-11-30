@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityInvalidArgumentException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
+import mkoutra.birthdaykeeper.core.exceptions.ValidationException;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
@@ -46,7 +47,11 @@ public class FriendRestController {
     @PostMapping("/")
     public ResponseEntity<FriendReadOnlyDTO> insertFriend(
             @Valid @RequestBody FriendInsertDTO friendInsertDTO,
-            BindingResult bindingResult) throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
+            BindingResult bindingResult) throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult);
+        }
 
         FriendReadOnlyDTO friendReadOnlyDTO = friendService.saveFriend(friendInsertDTO);
 
@@ -55,10 +60,14 @@ public class FriendRestController {
 
     @PutMapping("/{id}")
     public ResponseEntity<FriendReadOnlyDTO> updateFriend(
-            @PathVariable String id,
+            @PathVariable String id,    // TODO Use it
             @Valid @RequestBody FriendUpdateDTO friendUpdateDTO,
             BindingResult bindingResult
-            ) throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException{
+            ) throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException{
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult);
+        }
 
         FriendReadOnlyDTO friendReadOnlyDTO = friendService.updateFriend(friendUpdateDTO);
 

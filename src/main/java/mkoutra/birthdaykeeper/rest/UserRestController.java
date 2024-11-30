@@ -3,6 +3,7 @@ package mkoutra.birthdaykeeper.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
+import mkoutra.birthdaykeeper.core.exceptions.ValidationException;
 import mkoutra.birthdaykeeper.dto.userDTOs.UserInsertDTO;
 import mkoutra.birthdaykeeper.dto.userDTOs.UserReadOnlyDTO;
 import mkoutra.birthdaykeeper.service.IUserService;
@@ -24,7 +25,12 @@ public class UserRestController {
     @PostMapping("/")
     public ResponseEntity<UserReadOnlyDTO> insertUser(
             @Valid @RequestBody UserInsertDTO userInsertDTO,
-            BindingResult bindingResult) throws EntityAlreadyExistsException {
+            BindingResult bindingResult) throws ValidationException, EntityAlreadyExistsException {
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult);
+        }
+
         UserReadOnlyDTO userReadOnlyDTO = userService.saveUser(userInsertDTO);
         return new ResponseEntity<>(userReadOnlyDTO, HttpStatus.OK);
     }
