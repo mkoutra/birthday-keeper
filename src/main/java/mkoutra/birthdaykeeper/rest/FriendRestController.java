@@ -14,14 +14,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/friend")
+@RequestMapping("/api/friends")
 @RequiredArgsConstructor
 public class FriendRestController {
 
     private final IFriendService friendService;
 
-    // Testing
+//    @GetMapping("/")
+//    public ResponseEntity<List<FriendReadOnlyDTO>> getAllFriends() {
+//        return new ResponseEntity<>(friendService.getAllFriends(), HttpStatus.OK);
+//    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FriendReadOnlyDTO> getFriendWithId(@PathVariable String id)
+            throws EntityNotFoundException {
+        return new ResponseEntity<>(friendService.getFriendById(Long.parseLong(id)), HttpStatus.OK);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<FriendReadOnlyDTO>> getFriendsFromUser(@RequestParam("username") String username)
+            throws EntityNotFoundException {
+        if (username.isBlank()) {
+            return new ResponseEntity<>(friendService.getAllFriends(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(friendService.getAllFriendsForUser(username), HttpStatus.OK);
+    }
+
     @PostMapping("/")
     public ResponseEntity<FriendReadOnlyDTO> insertFriend(
             @Valid @RequestBody FriendInsertDTO friendInsertDTO,
@@ -32,8 +53,9 @@ public class FriendRestController {
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
 
-    @PutMapping("/")
+    @PutMapping("/{id}")
     public ResponseEntity<FriendReadOnlyDTO> updateFriend(
+            @PathVariable String id,
             @Valid @RequestBody FriendUpdateDTO friendUpdateDTO,
             BindingResult bindingResult
             ) throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException{
@@ -41,5 +63,11 @@ public class FriendRestController {
         FriendReadOnlyDTO friendReadOnlyDTO = friendService.updateFriend(friendUpdateDTO);
 
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<FriendReadOnlyDTO> deleteFriendWithId(@PathVariable String id)
+            throws EntityNotFoundException {
+        return new ResponseEntity<>(friendService.deleteFriend(Long.parseLong(id)), HttpStatus.OK);
     }
 }

@@ -6,6 +6,7 @@ import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
+import mkoutra.birthdaykeeper.model.Friend;
 
 import java.util.List;
 
@@ -18,6 +19,6 @@ public interface IFriendService {
 
     FriendReadOnlyDTO getFriendById(Long id) throws EntityNotFoundException;
     FriendReadOnlyDTO deleteFriend(Long id) throws EntityNotFoundException;
-//    List<FriendReadOnlyDTO> getFriendsByDateOfBirthMonth(Short month);
     List<FriendReadOnlyDTO> getAllFriends();
+    List<FriendReadOnlyDTO> getAllFriendsForUser(String username) throws EntityNotFoundException;
 }

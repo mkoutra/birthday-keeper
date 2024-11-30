@@ -129,27 +129,21 @@ public class FriendService implements IFriendService {
     @Transactional(rollbackOn = Exception.class)
     public FriendReadOnlyDTO deleteFriend(Long id) throws EntityNotFoundException {
         try {
-            FriendReadOnlyDTO friendReadOnlyDTO = friendRepository
+            Friend friendToDelete = friendRepository
                     .findById(id)
-                    .map(mapper::mapToFriendReadOnlyDTO)
                     .orElseThrow(() -> new EntityNotFoundException("Friend", "Friend with id " + id + " does not exist."));
+
+            FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friendToDelete);
+
+            friendToDelete.getUser().removeFriend(friendToDelete);
             friendRepository.deleteById(id);
+
             return friendReadOnlyDTO;
         } catch (EntityNotFoundException e) {
             LOGGER.error("Friend Error: Friend with id {} was not deleted.", id);
             throw e;
         }
     }
-
-//    @Override
-//    @Transactional(rollbackOn = Exception.class)
-//    public List<FriendReadOnlyDTO> getFriendsByDateOfBirthMonth(Short month) {
-//        return friendRepository
-//                .findFriendsByDateOfBirth_Month(month)
-//                .stream()
-//                .map(mapper::mapToFriendReadOnlyDTO)
-//                .toList();
-//    }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
@@ -159,5 +153,19 @@ public class FriendService implements IFriendService {
                 .stream()
                 .map(mapper::mapToFriendReadOnlyDTO)
                 .toList();
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public List<FriendReadOnlyDTO> getAllFriendsForUser(String username) throws EntityNotFoundException {
+        try {
+            User user = userRepository
+                    .findUserByUsername(username)
+                    .orElseThrow(() -> new EntityNotFoundException("User", "User with username: " + username + " does not exist."));
+            return friendRepository.findFriendsByUserId(user.getId()).stream().map(mapper::mapToFriendReadOnlyDTO).toList();
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("User with username {} does not exist.", username);
+            throw e;
+        }
     }
 }
