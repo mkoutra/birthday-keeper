@@ -9,6 +9,7 @@ import mkoutra.birthdaykeeper.dto.userDTOs.UserReadOnlyDTO;
 import mkoutra.birthdaykeeper.model.Friend;
 import mkoutra.birthdaykeeper.model.User;
 import mkoutra.birthdaykeeper.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class Mapper {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Friend mapToFriend(FriendInsertDTO dto) {
         Friend friend = new Friend();
@@ -54,7 +56,7 @@ public class Mapper {
     public User mapToUser(UserInsertDTO userInsertDTO) {
         User user = new User();
         user.setUsername(userInsertDTO.getUsername());
-        user.setPassword("Hashed: " + userInsertDTO.getPassword()); // TODO: Add Hashing
+        user.setPassword(passwordEncoder.encode(userInsertDTO.getPassword()));  // Hash password with BCrypt
         return user;
     }
 
