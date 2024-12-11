@@ -17,12 +17,13 @@ public class Friend extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 40)
     private String firstname;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 40)
     private String lastname;
 
+    @Column(length = 40)
     private String nickname;
 
     @Column(name = "date_of_birth", nullable = false)

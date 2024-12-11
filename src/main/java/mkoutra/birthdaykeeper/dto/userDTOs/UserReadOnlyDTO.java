@@ -10,4 +10,5 @@ import lombok.*;
 public class UserReadOnlyDTO {
     private String id;
     private String username;
+    private String role;
 }

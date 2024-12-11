@@ -1,6 +1,7 @@
 package mkoutra.birthdaykeeper.mapper;
 
 import lombok.RequiredArgsConstructor;
+import mkoutra.birthdaykeeper.core.enums.Role;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
@@ -57,13 +58,15 @@ public class Mapper {
         User user = new User();
         user.setUsername(userInsertDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userInsertDTO.getPassword()));  // Hash password with BCrypt
+        user.setRole(userInsertDTO.getRole());
         return user;
     }
 
     public UserReadOnlyDTO mapToUserReadOnlyDTO(User user) {
         return new UserReadOnlyDTO(
                 user.getId().toString(),
-                user.getUsername()
+                user.getUsername(),
+                user.getRole().name()
         );
     }
 }
