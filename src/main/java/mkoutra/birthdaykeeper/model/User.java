@@ -20,10 +20,10 @@ public class User extends AbstractEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false, updatable = false)
+    @Column(unique = true, nullable = false, updatable = false, length = 40)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 60)  // length 60 for Blowfish cipher
     private String password;
 
     @Column(nullable = false)

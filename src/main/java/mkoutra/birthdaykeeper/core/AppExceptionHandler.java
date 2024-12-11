@@ -40,6 +40,8 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
             httpStatus = HttpStatus.BAD_REQUEST;
         } else if (ex instanceof EntityNotFoundException) {
             httpStatus = HttpStatus.NOT_FOUND;
+        } else if (ex instanceof UserNotAuthenticatedException) {
+            httpStatus = HttpStatus.UNAUTHORIZED;
         }
 
         return new ResponseEntity<>(errorResponseDTO, httpStatus);

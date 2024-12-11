@@ -52,6 +52,10 @@ public class SecurityConfiguration {
                         exceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint()))         // Handle authentication exception
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.accessDeniedHandler(customAccessDeniedHandler()))                   // Handle authorization exception
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers("/api/user/", "/api/authenticate/").permitAll()
+                        .requestMatchers("/**").authenticated()
+                )
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless because we use jwt
                 .authenticationProvider(authenticationProvider())

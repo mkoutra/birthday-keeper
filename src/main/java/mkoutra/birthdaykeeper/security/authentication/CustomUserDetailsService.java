@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * A custom implementation of `UserDetailsService`.
  * `UserDetailsService` is used to retrieve information about the `UserDetail` object.
  * In our implementation `User` implements `UserDetails`.
- * It is used for authentication purposes.
+ * It is used for authentication purposes in JwtAuthenticationFilter.
  */
 @Service
 @RequiredArgsConstructor

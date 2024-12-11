@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // No authorization header found, or it does not contain a Bearer token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            LOGGER.warn("Invalid Authorization Header.");
             filterChain.doFilter(request, response);            // Move to the next filter
             return;
         }

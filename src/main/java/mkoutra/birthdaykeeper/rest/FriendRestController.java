@@ -35,6 +35,7 @@ public class FriendRestController {
         return new ResponseEntity<>(friendService.getFriendById(Long.parseLong(id)), HttpStatus.OK);
     }
 
+    // Get All Friends
     @GetMapping("/")
     public ResponseEntity<List<FriendReadOnlyDTO>> getFriendsFromUser(@RequestParam("username") String username)
             throws EntityNotFoundException {
