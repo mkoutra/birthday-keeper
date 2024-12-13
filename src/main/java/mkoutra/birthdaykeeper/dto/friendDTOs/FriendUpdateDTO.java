@@ -13,9 +13,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ToString
 public class FriendUpdateDTO {
-    @NotEmpty(message = "Username must not be empty.")
-    private String username;    // TODO: retrieve it from SecurityContext
-
     @NotEmpty(message = "Id must not be empty")
     private String id;
 

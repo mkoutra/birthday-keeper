@@ -43,7 +43,12 @@ public class FriendRestController {
             throw new EntityInvalidArgumentException("User", "Invalid user.");
         }
 
-        FriendReadOnlyDTO friendReadOnlyDTO = friendService.getFriendByIdAndUsername(Long.parseLong(id), loggedInUser.getUsername());
+        if (!friendService.existsFriendIdToUsername(Long.parseLong(id), loggedInUser.getUsername())) {
+            throw new EntityNotFoundException("Friend", "User " + loggedInUser.getUsername()
+                    + " does not have a friend with id " + id);
+        }
+
+        FriendReadOnlyDTO friendReadOnlyDTO = friendService.getFriendById(Long.parseLong(id));
 
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
@@ -87,13 +92,27 @@ public class FriendRestController {
 
     @PutMapping("/{id}")
     public ResponseEntity<FriendReadOnlyDTO> updateFriend(
-            @PathVariable String id,    // TODO Use it
+            @AuthenticationPrincipal User loggedInUser,
+            @PathVariable String id,
             @Valid @RequestBody FriendUpdateDTO friendUpdateDTO,
             BindingResult bindingResult
             ) throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException{
 
+        if (loggedInUser == null || !loggedInUser.isEnabled()) {
+            throw new EntityInvalidArgumentException("User", "Invalid user.");
+        }
+
+        if (!id.equals(friendUpdateDTO.getId())) {
+            throw new EntityInvalidArgumentException("Friend", "Friend ids do not match.");
+        }
+
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
+        }
+
+        if (!friendService.existsFriendIdToUsername(Long.parseLong(id), loggedInUser.getUsername())) {
+            throw new EntityNotFoundException("Friend", "User " + loggedInUser.getUsername()
+                    + " does not have a friend with id " + id);
         }
 
         FriendReadOnlyDTO friendReadOnlyDTO = friendService.updateFriend(friendUpdateDTO);
@@ -101,7 +120,7 @@ public class FriendRestController {
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // TODO
     public ResponseEntity<FriendReadOnlyDTO> deleteFriendWithId(@PathVariable String id)
             throws EntityNotFoundException {
         return new ResponseEntity<>(friendService.deleteFriend(Long.parseLong(id)), HttpStatus.OK);

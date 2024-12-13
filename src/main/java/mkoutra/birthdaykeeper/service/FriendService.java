@@ -31,6 +31,12 @@ public class FriendService implements IFriendService {
     private final UserRepository userRepository;
     private final Mapper mapper;
 
+    @Transactional(rollbackOn = Exception.class)
+    @Override
+    public boolean existsFriendIdToUsername(Long friendId, String username) {
+        return friendRepository.existsByFriendIdAndUsername(friendId, username);
+    }
+
     /**
      * Adds a new friend to the specified user, identified by their username.
      *
@@ -84,36 +90,78 @@ public class FriendService implements IFriendService {
         }
     }
 
+//    @Override
+//    @Transactional(rollbackOn = Exception.class)
+//    public FriendReadOnlyDTO updateFriend(FriendUpdateDTO friendUpdateDTO)
+//            throws EntityAlreadyExistsException, EntityNotFoundException {
+//        try {
+//            // Check if user exists
+//            User user = userRepository.findUserByUsername(friendUpdateDTO.getUsername())
+//                    .orElseThrow(() -> new EntityNotFoundException("User", "User " + friendUpdateDTO.getUsername() + " does not exist."));
+//
+//            Optional<Friend> friendToBeUpdated = friendRepository.findById(Long.parseLong(friendUpdateDTO.getId()));
+//            // Check if a friend with the Id given in the DTO exists
+//            if (friendToBeUpdated.isEmpty()) {
+//                throw new EntityNotFoundException("Friend", "Friend with Id " + friendUpdateDTO.getId() + " does not exist.");
+//            }
+//
+//            Friend friend = mapper.mapToFriend(friendUpdateDTO);
+//            friend.setUser(user);
+//
+//            // Check if a user already has a different friend with the given firstname, lastname
+//            Optional<Friend> friendCheck = friendRepository.findFriendByFirstnameAndLastnameAndUserId(
+//                    friend.getFirstname(), friend.getLastname(), user.getId());
+//
+//            if (friendCheck.isPresent() && !Objects.equals(friendCheck.get().getId(), friend.getId())) {
+//                throw new EntityAlreadyExistsException("Friend",
+//                        "The user: " + user.getUsername() + " already has a friend with" +
+//                        "Firstname: " + friend.getFirstname() +
+//                        " and Lastname: " + friend.getLastname());
+//            }
+//
+//            FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friendRepository.save(friend));
+//            LOGGER.info("Friend {} {} updated.", friendReadOnlyDTO.getFirstname(), friendReadOnlyDTO.getLastname());
+//            return friendReadOnlyDTO;
+//        } catch (EntityNotFoundException e) {
+//            LOGGER.error("{} Error: {}", e.getCode(), e.getMessage());
+//            throw e;
+//        }
+//    }
+
     @Override
     @Transactional(rollbackOn = Exception.class)
     public FriendReadOnlyDTO updateFriend(FriendUpdateDTO friendUpdateDTO)
-            throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
+            throws EntityAlreadyExistsException, EntityNotFoundException {
         try {
-            // Check if user exists
-            User user = userRepository.findUserByUsername(friendUpdateDTO.getUsername())
-                    .orElseThrow(() -> new EntityNotFoundException("User", "User " + friendUpdateDTO.getUsername() + " does not exist."));
+            Friend friendToUpdate = friendRepository
+                    .findById(Long.parseLong(friendUpdateDTO.getId()))
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Friend",
+                                    "Friend with Id " + friendUpdateDTO.getId() + " does not exist."));
+            User user = friendToUpdate.getUser();    // The user that the friend belongs to
 
-            Optional<Friend> friendToBeUpdated = friendRepository.findById(Long.parseLong(friendUpdateDTO.getId()));
-            // Check if a friend with the Id given in the DTO exists
-            if (friendToBeUpdated.isEmpty()) {
-                throw new EntityNotFoundException("Friend", "Friend with Id " + friendUpdateDTO.getId() + " does not exist.");
-            }
+            Friend updatedFriend = mapper.mapToFriend(friendUpdateDTO);
+            updatedFriend.setUser(user);
 
-            Friend friend = mapper.mapToFriend(friendUpdateDTO);
-            friend.setUser(user);
+            // Check if the given names already exist for a different friend of the current user.
+            boolean friendAlreadyExists = friendRepository
+                    .findFriendByFirstnameAndLastnameAndUserId(
+                            updatedFriend.getFirstname(), updatedFriend.getLastname(), user.getId())
+                    .stream()
+                    .anyMatch(friend -> !friend.getId().equals(updatedFriend.getId()));
 
-            // Check if a user already has a different friend with the given firstname, lastname
-            Optional<Friend> friendCheck = friendRepository.findFriendByFirstnameAndLastnameAndUserId(
-                    friend.getFirstname(), friend.getLastname(), user.getId());
-
-            if (friendCheck.isPresent() && !Objects.equals(friendCheck.get().getId(), friend.getId())) {
+            if (friendAlreadyExists) {
                 throw new EntityAlreadyExistsException("Friend",
-                        "The user: " + user.getUsername() + " already has a friend with" +
-                        "Firstname: " + friend.getFirstname() +
-                        " and Lastname: " + friend.getLastname());
+                        new StringBuilder("The user: ")
+                                .append(user.getUsername())
+                                .append(" already has a friend with Firstname: ")
+                                .append(updatedFriend.getFirstname())
+                                .append(" and Lastname: ")
+                                .append(updatedFriend.getLastname())
+                                .toString());
             }
 
-            FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friendRepository.save(friend));
+            FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friendRepository.save(updatedFriend));
             LOGGER.info("Friend {} {} updated.", friendReadOnlyDTO.getFirstname(), friendReadOnlyDTO.getLastname());
             return friendReadOnlyDTO;
         } catch (EntityNotFoundException e) {
@@ -147,7 +195,7 @@ public class FriendService implements IFriendService {
                     .orElseThrow(() -> new EntityNotFoundException("User", "User "+ username + " not found."))
                     .getAllFriends()
                     .stream()
-                    .filter(f -> f.getId().equals(id))
+                    .filter(fr -> fr.getId().equals(id))
                     .findFirst();
 
             return friend

@@ -15,11 +15,12 @@ public interface IFriendService {
             throws EntityAlreadyExistsException, EntityNotFoundException;
 
     FriendReadOnlyDTO updateFriend(FriendUpdateDTO friendUpdateDTO)
-            throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException;
+            throws EntityAlreadyExistsException, EntityNotFoundException;
 
     FriendReadOnlyDTO getFriendById(Long id) throws EntityNotFoundException;
     FriendReadOnlyDTO deleteFriend(Long id) throws EntityNotFoundException;
     List<FriendReadOnlyDTO> getAllFriends();
     List<FriendReadOnlyDTO> getAllFriendsForUser(String username) throws EntityNotFoundException;
     FriendReadOnlyDTO getFriendByIdAndUsername(Long id, String username) throws EntityNotFoundException;
+    boolean existsFriendIdToUsername(Long friendId, String username);
 }
