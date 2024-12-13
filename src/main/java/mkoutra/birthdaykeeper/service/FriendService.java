@@ -15,6 +15,7 @@ import mkoutra.birthdaykeeper.repository.FriendRepository;
 import mkoutra.birthdaykeeper.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,12 +36,14 @@ public class FriendService implements IFriendService {
     public FriendReadOnlyDTO saveFriend(FriendInsertDTO friendInsertDTO)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
 
+        User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String firstname = friendInsertDTO.getFirstname();
         String lastname = friendInsertDTO.getLastname();
+
         try {
             User user = userRepository
-                    .findUserByUsername(friendInsertDTO.getUsername())
-                    .orElseThrow(() -> new EntityNotFoundException("User", "User " + friendInsertDTO.getUsername() + " does not exist."));
+                    .findUserByUsername(loggedInUser.getUsername())
+                    .orElseThrow(() -> new EntityNotFoundException("User", "User " + loggedInUser.getUsername() + " does not exist."));
 
             if (friendRepository.findFriendByFirstnameAndLastnameAndUserId(firstname, lastname, user.getId()).isPresent()) {
                 throw new EntityAlreadyExistsException("Friend", "Friend:" + firstname + " " + lastname + " already exists.");
@@ -48,7 +51,7 @@ public class FriendService implements IFriendService {
 
             Friend friend = mapper.mapToFriend(friendInsertDTO);
 
-            user.addFriend(friend);                 // Covers both user -> friend and friend -> user relation.
+            user.addFriend(friend);                     // Covers both user -> friend and friend -> user relation.
             friend = friendRepository.save(friend);
 
             /*
@@ -68,7 +71,7 @@ public class FriendService implements IFriendService {
             LOGGER.error("Friend {} {} already exists.", firstname, lastname);
             throw e;
         } catch (EntityNotFoundException e) {
-            LOGGER.error("User with username: {} does not exist. Unable to insert friend.", friendInsertDTO.getUsername());
+            LOGGER.error("User with username: {} does not exist. Unable to insert friend.", loggedInUser.getUsername());
             throw e;
         }
     }

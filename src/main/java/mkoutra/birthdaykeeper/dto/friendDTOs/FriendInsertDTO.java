@@ -13,9 +13,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ToString
 public class FriendInsertDTO {
-    @NotEmpty(message = "Username must not be empty.")
-    private String username;    // TODO: retrieve it from SecurityContext
-
     @NotEmpty(message = "First name must not be empty.")
     @Size(max = 40, message = "First name must contain less than 40 characters.")
     private String firstname;

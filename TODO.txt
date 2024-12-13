@@ -3,3 +3,5 @@ Get username from JWT instead of directly from client.
 Maybe I should not have role in UserReadOnlyDTO, user role is inside JWT.
 Improve authorization
 Change endpoint names
+
+Add Indices in the database.
