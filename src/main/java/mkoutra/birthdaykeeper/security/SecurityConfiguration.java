@@ -47,14 +47,14 @@ public class SecurityConfiguration {
         // TODO: Add authorization filter
         http
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))  // Configure CORS
-                .csrf(AbstractHttpConfigurer::disable)                                                                  // Disable CSRF. We use JWT, and we don't use session based security
+                .csrf(AbstractHttpConfigurer::disable)                                                              // Disable CSRF. We use JWT, and we don't use session based security
                 .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint()))         // Handle authentication exception
+                        exceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint()))     // Handle authentication exception
                 .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer.accessDeniedHandler(customAccessDeniedHandler()))                   // Handle authorization exception
+                        exceptionHandlingConfigurer.accessDeniedHandler(customAccessDeniedHandler()))               // Handle authorization exception
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/user/", "/api/authenticate/").permitAll()
-                        .requestMatchers("/**").authenticated()
+                        .requestMatchers("/api/user/", "/api/auth/authenticate").permitAll()
+                        .requestMatchers("/**").authenticated()                                                   // Authentication required for all other endpoints.
                 )
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless because we use jwt

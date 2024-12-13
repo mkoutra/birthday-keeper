@@ -6,10 +6,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import mkoutra.birthdaykeeper.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -73,6 +75,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.setContext(context);                              // Insert SecurityContext inside SecurityContextHolder
 
                     // SecurityContextHolder.getContext().setAuthentication(authToken);     // Alternative approach
+
+                    // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                    // User loggedInUser = authentication == null ? null : (User) authentication.getPrincipal();
+                    // LOGGER.info("Logged in user: {} with role {}", loggedInUser.getUsername(), loggedInUser.getRole());
                 } else {
                     LOGGER.warn("Token is invalid.");
                 }

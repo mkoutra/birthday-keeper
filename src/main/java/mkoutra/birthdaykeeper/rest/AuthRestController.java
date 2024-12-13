@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/authenticate")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthRestController {
     private final static Logger LOGGER = LoggerFactory.getLogger(AuthRestController.class);
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/")
+    @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponseDTO> authenticateUser(
             @Valid @RequestBody AuthenticationRequestDTO authenticationRequestDTO,
             BindingResult bindingResult) throws ValidationException, UserNotAuthenticatedException {

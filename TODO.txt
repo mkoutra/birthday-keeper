@@ -1,3 +1,5 @@
 Replace id with uuid
 Get username from JWT instead of directly from client.
-Maybe i should not have role in UserReadOnlyDTO, user role is inside JWT.
+Maybe I should not have role in UserReadOnlyDTO, user role is inside JWT.
+Improve authorization
+Change endpoint names
