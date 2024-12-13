@@ -11,8 +11,8 @@ import mkoutra.birthdaykeeper.model.Friend;
 import java.util.List;
 
 public interface IFriendService {
-    FriendReadOnlyDTO saveFriend(FriendInsertDTO friendInsertDTO)
-            throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException;
+    FriendReadOnlyDTO saveFriend(FriendInsertDTO friendInsertDTO, String username)
+            throws EntityAlreadyExistsException, EntityNotFoundException;
 
     FriendReadOnlyDTO updateFriend(FriendUpdateDTO friendUpdateDTO)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException;
@@ -21,4 +21,5 @@ public interface IFriendService {
     FriendReadOnlyDTO deleteFriend(Long id) throws EntityNotFoundException;
     List<FriendReadOnlyDTO> getAllFriends();
     List<FriendReadOnlyDTO> getAllFriendsForUser(String username) throws EntityNotFoundException;
+    FriendReadOnlyDTO getFriendByIdAndUsername(Long id, String username) throws EntityNotFoundException;
 }

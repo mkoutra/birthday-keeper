@@ -5,3 +5,9 @@ Improve authorization
 Change endpoint names
 
 Add Indices in the database.
+
+Fix exception names and use cases
+
+Create an Admin Controller
+
+Use Pagination

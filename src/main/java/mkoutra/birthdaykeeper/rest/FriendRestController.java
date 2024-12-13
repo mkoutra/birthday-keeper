@@ -10,7 +10,9 @@ import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
 import mkoutra.birthdaykeeper.model.User;
+import mkoutra.birthdaykeeper.repository.UserRepository;
 import mkoutra.birthdaykeeper.service.IFriendService;
+import mkoutra.birthdaykeeper.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -28,47 +30,46 @@ public class FriendRestController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FriendRestController.class);
     private final IFriendService friendService;
+    private final UserRepository userRepository;
 
-//    @GetMapping("/")
-//    public ResponseEntity<List<FriendReadOnlyDTO>> getAllFriends() {
-//        return new ResponseEntity<>(friendService.getAllFriends(), HttpStatus.OK);
-//    }
-
+    // Get a friend with the id given, for the user in the security context.
     @GetMapping("/{id}")
-    public ResponseEntity<FriendReadOnlyDTO> getFriendWithId(@PathVariable String id)
-            throws EntityNotFoundException {
-        return new ResponseEntity<>(friendService.getFriendById(Long.parseLong(id)), HttpStatus.OK);
-    }
+    public ResponseEntity<FriendReadOnlyDTO> getFriendForUser(
+            @AuthenticationPrincipal User loggedInUser,
+            @PathVariable String id)
+            throws EntityNotFoundException, EntityInvalidArgumentException {
 
-    // Get All Friends
-    @GetMapping("/")
-    public ResponseEntity<List<FriendReadOnlyDTO>> getFriendsFromUser(@RequestParam("username") String username)
-            throws EntityNotFoundException {
-        if (username.isBlank()) {
-            return new ResponseEntity<>(friendService.getAllFriends(), HttpStatus.OK);
+        if (loggedInUser == null || !loggedInUser.isEnabled()) {
+            throw new EntityInvalidArgumentException("User", "Invalid user.");
         }
-        return new ResponseEntity<>(friendService.getAllFriendsForUser(username), HttpStatus.OK);
+
+        FriendReadOnlyDTO friendReadOnlyDTO = friendService.getFriendByIdAndUsername(Long.parseLong(id), loggedInUser.getUsername());
+
+        return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
 
-//    @PostMapping("/")
-//    public ResponseEntity<FriendReadOnlyDTO> insertFriend(
-//            @Valid @RequestBody FriendInsertDTO friendInsertDTO,
-//            BindingResult bindingResult) throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
-//
-//        if (bindingResult.hasErrors()) {
-//            throw new ValidationException(bindingResult);
-//        }
-//
-//        FriendReadOnlyDTO friendReadOnlyDTO = friendService.saveFriend(friendInsertDTO);
-//
-//        return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
-//    }
+    // Get all friends of the user which is inside the security context.
+    @GetMapping("/")
+    public ResponseEntity<List<FriendReadOnlyDTO>> getFriendsForUser(@AuthenticationPrincipal User loggedInUser)
+            throws EntityInvalidArgumentException, EntityNotFoundException {
 
+        if (loggedInUser == null || !loggedInUser.isEnabled()) {
+            throw new EntityInvalidArgumentException("User", "Invalid user.");
+        }
+
+        List<FriendReadOnlyDTO> allUserFriends = friendService.getAllFriendsForUser(loggedInUser.getUsername());
+
+        return new ResponseEntity<>(allUserFriends, HttpStatus.OK);
+    }
+
+
+    // Insert a Friend to the user which is inside the securityContext.
     @PostMapping("/")
     public ResponseEntity<FriendReadOnlyDTO> insertFriend(
             @AuthenticationPrincipal User loggedInUser,
             @Valid @RequestBody FriendInsertDTO friendInsertDTO,
-            BindingResult bindingResult) throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
+            BindingResult bindingResult)
+            throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
 
         if (loggedInUser == null || !loggedInUser.isEnabled()) {
             throw new EntityInvalidArgumentException("User", "Invalid user.");
@@ -79,7 +80,7 @@ public class FriendRestController {
         }
 
         LOGGER.info("Username {} wants to insert friend with surname {}", loggedInUser.getUsername(), friendInsertDTO.getLastname());
-        FriendReadOnlyDTO friendReadOnlyDTO = friendService.saveFriend(friendInsertDTO);
+        FriendReadOnlyDTO friendReadOnlyDTO = friendService.saveFriend(friendInsertDTO, loggedInUser.getUsername());
 
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
