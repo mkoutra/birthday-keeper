@@ -25,12 +25,14 @@ public class UserService implements IUserService {
     public UserReadOnlyDTO saveUser(UserInsertDTO userInsertDTO) throws EntityAlreadyExistsException {
         try {
             if (userRepository.findUserByUsername(userInsertDTO.getUsername()).isPresent()) {
-                throw new EntityAlreadyExistsException("User", "User with username " + userInsertDTO.getUsername() + " already exists.");
+                throw new EntityAlreadyExistsException("User",
+                        "User with username " + userInsertDTO.getUsername() + " already exists.");
             }
             User user = mapper.mapToUser(userInsertDTO);
             UserReadOnlyDTO userReadOnlyDTO = mapper.mapToUserReadOnlyDTO(userRepository.save(user));
 
-            LOGGER.info("User with id {} and username {} inserted.", userReadOnlyDTO.getId() ,userInsertDTO.getUsername());
+            LOGGER.info("User with id {} and username {} inserted.",
+                    userReadOnlyDTO.getId() ,userInsertDTO.getUsername());
             return userReadOnlyDTO;
         } catch(EntityAlreadyExistsException e) {
             LOGGER.error("User Error: User with username {} does not exist.", userInsertDTO.getUsername());

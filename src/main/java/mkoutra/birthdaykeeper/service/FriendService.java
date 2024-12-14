@@ -3,7 +3,6 @@ package mkoutra.birthdaykeeper.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
-import mkoutra.birthdaykeeper.core.exceptions.EntityInvalidArgumentException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
@@ -15,11 +14,9 @@ import mkoutra.birthdaykeeper.repository.FriendRepository;
 import mkoutra.birthdaykeeper.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,6 +28,13 @@ public class FriendService implements IFriendService {
     private final UserRepository userRepository;
     private final Mapper mapper;
 
+    /**
+     * Checks if the user with the given username has a friend with the specified ID.
+     *
+     * @param friendId  The friend's ID.
+     * @param username  The user's username.
+     * @return          True if the friend exists for the user, otherwise false.
+     */
     @Transactional(rollbackOn = Exception.class)
     @Override
     public boolean existsFriendIdToUsername(Long friendId, String username) {
@@ -38,13 +42,13 @@ public class FriendService implements IFriendService {
     }
 
     /**
-     * Adds a new friend to the specified user, identified by their username.
+     * Adds a new friend to the user identified by the given username.
      *
-     * @param friendInsertDTO   The friend's details.
-     * @param username          The username of the user to add the friend to.
-     * @return                  The saved friend's details.
-     * @throws EntityAlreadyExistsException If a friend with the same name already exists for the user.
-     * @throws EntityNotFoundException      If the user does not exist.
+     * @param friendInsertDTO               The friend's details.
+     * @param username                      The user's username.
+     * @return                              Details of the saved friend.
+     * @throws EntityAlreadyExistsException If a friend with the same name exists for the user.
+     * @throws EntityNotFoundException      If the user is not found.
      */
     @Override
     @Transactional(rollbackOn = Exception.class)
@@ -90,44 +94,14 @@ public class FriendService implements IFriendService {
         }
     }
 
-//    @Override
-//    @Transactional(rollbackOn = Exception.class)
-//    public FriendReadOnlyDTO updateFriend(FriendUpdateDTO friendUpdateDTO)
-//            throws EntityAlreadyExistsException, EntityNotFoundException {
-//        try {
-//            // Check if user exists
-//            User user = userRepository.findUserByUsername(friendUpdateDTO.getUsername())
-//                    .orElseThrow(() -> new EntityNotFoundException("User", "User " + friendUpdateDTO.getUsername() + " does not exist."));
-//
-//            Optional<Friend> friendToBeUpdated = friendRepository.findById(Long.parseLong(friendUpdateDTO.getId()));
-//            // Check if a friend with the Id given in the DTO exists
-//            if (friendToBeUpdated.isEmpty()) {
-//                throw new EntityNotFoundException("Friend", "Friend with Id " + friendUpdateDTO.getId() + " does not exist.");
-//            }
-//
-//            Friend friend = mapper.mapToFriend(friendUpdateDTO);
-//            friend.setUser(user);
-//
-//            // Check if a user already has a different friend with the given firstname, lastname
-//            Optional<Friend> friendCheck = friendRepository.findFriendByFirstnameAndLastnameAndUserId(
-//                    friend.getFirstname(), friend.getLastname(), user.getId());
-//
-//            if (friendCheck.isPresent() && !Objects.equals(friendCheck.get().getId(), friend.getId())) {
-//                throw new EntityAlreadyExistsException("Friend",
-//                        "The user: " + user.getUsername() + " already has a friend with" +
-//                        "Firstname: " + friend.getFirstname() +
-//                        " and Lastname: " + friend.getLastname());
-//            }
-//
-//            FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friendRepository.save(friend));
-//            LOGGER.info("Friend {} {} updated.", friendReadOnlyDTO.getFirstname(), friendReadOnlyDTO.getLastname());
-//            return friendReadOnlyDTO;
-//        } catch (EntityNotFoundException e) {
-//            LOGGER.error("{} Error: {}", e.getCode(), e.getMessage());
-//            throw e;
-//        }
-//    }
-
+    /**
+     * Updates a friend's details based on the provided DTO.
+     *
+     * @param friendUpdateDTO               The DTO containing updated friend information.
+     * @return                              The updated friend's details.
+     * @throws EntityAlreadyExistsException If the updated details match an existing friend.
+     * @throws EntityNotFoundException      If the friend ID does not exist.
+     */
     @Override
     @Transactional(rollbackOn = Exception.class)
     public FriendReadOnlyDTO updateFriend(FriendUpdateDTO friendUpdateDTO)
@@ -135,8 +109,7 @@ public class FriendService implements IFriendService {
         try {
             Friend friendToUpdate = friendRepository
                     .findById(Long.parseLong(friendUpdateDTO.getId()))
-                    .orElseThrow(
-                            () -> new EntityNotFoundException("Friend",
+                    .orElseThrow( () -> new EntityNotFoundException("Friend",
                                     "Friend with Id " + friendUpdateDTO.getId() + " does not exist."));
             User user = friendToUpdate.getUser();    // The user that the friend belongs to
 
@@ -170,6 +143,13 @@ public class FriendService implements IFriendService {
         }
     }
 
+    /**
+     * Retrieves a friend's details by their ID.
+     *
+     * @param id                        The friend's ID.
+     * @return                          The friend's details as a DTO.
+     * @throws EntityNotFoundException  If no friend is found with the given ID.
+     */
     @Override
     @Transactional(rollbackOn = Exception.class)
     public FriendReadOnlyDTO getFriendById(Long id) throws EntityNotFoundException {
@@ -177,13 +157,92 @@ public class FriendService implements IFriendService {
             return friendRepository
                     .findById(id)
                     .map(mapper::mapToFriendReadOnlyDTO)
-                    .orElseThrow(() -> new EntityNotFoundException("Friend", "Friend with id " + id + " does not exist."));
+                    .orElseThrow(() -> new EntityNotFoundException("Friend",
+                            "Friend with id: " + id + " does not exist."));
         } catch (EntityNotFoundException e) {
             LOGGER.error("Friend Error: Friend with id {} was not found.", id);
             throw e;
         }
     }
 
+    /**
+     * Deletes a friend by their ID and returns their details.
+     *
+     * @param id                        The friend's ID.
+     * @return                          A DTO with the deleted friend's details.
+     * @throws EntityNotFoundException  If no friend is found with the given ID.
+     */
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public FriendReadOnlyDTO deleteFriend(Long id) throws EntityNotFoundException {
+        try {
+            Friend friendToDelete = friendRepository
+                    .findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Friend",
+                            "Friend with id " + id + " does not exist."));
+
+            FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friendToDelete);
+
+            friendToDelete.getUser().removeFriend(friendToDelete);
+            friendRepository.deleteById(id);
+
+            return friendReadOnlyDTO;
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("Friend Error: Friend with id {} was not deleted.", id);
+            throw e;
+        }
+    }
+
+    /**
+     * Retrieves all friends in the database.
+     *
+     * @return A list of DTOs with each friend's details.
+     */
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public List<FriendReadOnlyDTO> getAllFriends() {
+        return friendRepository
+                .findAll()
+                .stream()
+                .map(mapper::mapToFriendReadOnlyDTO)
+                .toList();
+    }
+
+    /**
+     * Retrieves all friends of the specified user.
+     *
+     * @param username                  The user's username.
+     * @return                          A list of DTOs with the friends' details.
+     * @throws EntityNotFoundException  If no user is found with the given username.
+     */
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public List<FriendReadOnlyDTO> getAllFriendsForUser(String username) throws EntityNotFoundException {
+        try {
+            User user = userRepository
+                    .findUserByUsername(username)
+                    .orElseThrow(() -> new EntityNotFoundException("User",
+                            "User with username: " + username + " does not exist."));
+
+            return friendRepository
+                    .findFriendsByUserId(user.getId())
+                    .stream()
+                    .map(mapper::mapToFriendReadOnlyDTO)
+                    .toList();
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("User with username {} does not exist.", username);
+            throw e;
+        }
+    }
+
+    /**
+     * Retrieves a friend's details by ID, ensuring they belong to the specified user.
+     *
+     * @param id                        The friend's ID.
+     * @param username                  The owner's username.
+     * @return                          The friend's details as a DTO.
+     * @throws EntityNotFoundException  If the user does not have a friend with the given ID.
+     */
     @Transactional(rollbackOn = Exception.class)
     @Override
     public FriendReadOnlyDTO getFriendByIdAndUsername(Long id, String username)
@@ -200,60 +259,11 @@ public class FriendService implements IFriendService {
 
             return friend
                     .map(mapper::mapToFriendReadOnlyDTO)
-                    .orElseThrow(
-                            () -> new EntityNotFoundException("Friend", "User " + username + " does not have a friend with id " + id));
+                    .orElseThrow(() -> new EntityNotFoundException("Friend",
+                            "User " + username + " does not have a friend with id " + id));
         }
         catch (EntityNotFoundException e) {
             LOGGER.error(e.getMessage());
-            throw e;
-        }
-    }
-
-    @Override
-    @Transactional(rollbackOn = Exception.class)
-    public FriendReadOnlyDTO deleteFriend(Long id) throws EntityNotFoundException {
-        try {
-            Friend friendToDelete = friendRepository
-                    .findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Friend", "Friend with id " + id + " does not exist."));
-
-            FriendReadOnlyDTO friendReadOnlyDTO = mapper.mapToFriendReadOnlyDTO(friendToDelete);
-
-            friendToDelete.getUser().removeFriend(friendToDelete);
-            friendRepository.deleteById(id);
-
-            return friendReadOnlyDTO;
-        } catch (EntityNotFoundException e) {
-            LOGGER.error("Friend Error: Friend with id {} was not deleted.", id);
-            throw e;
-        }
-    }
-
-    @Override
-    @Transactional(rollbackOn = Exception.class)
-    public List<FriendReadOnlyDTO> getAllFriends() {
-        return friendRepository
-                .findAll()
-                .stream()
-                .map(mapper::mapToFriendReadOnlyDTO)
-                .toList();
-    }
-
-    @Override
-    @Transactional(rollbackOn = Exception.class)
-    public List<FriendReadOnlyDTO> getAllFriendsForUser(String username) throws EntityNotFoundException {
-        try {
-            User user = userRepository
-                    .findUserByUsername(username)
-                    .orElseThrow(() -> new EntityNotFoundException("User", "User with username: " + username + " does not exist."));
-
-            return friendRepository
-                    .findFriendsByUserId(user.getId())
-                    .stream()
-                    .map(mapper::mapToFriendReadOnlyDTO)
-                    .toList();
-        } catch (EntityNotFoundException e) {
-            LOGGER.error("User with username {} does not exist.", username);
             throw e;
         }
     }

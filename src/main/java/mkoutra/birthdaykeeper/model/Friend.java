@@ -32,4 +32,16 @@ public class Friend extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Override
+    public String toString() {
+        return "Friend{" +
+                "id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", user_id=" + user.getId() +
+                '}';
+    }
 }

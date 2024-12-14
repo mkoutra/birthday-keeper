@@ -10,9 +10,7 @@ import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
 import mkoutra.birthdaykeeper.model.User;
-import mkoutra.birthdaykeeper.repository.UserRepository;
 import mkoutra.birthdaykeeper.service.IFriendService;
-import mkoutra.birthdaykeeper.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,7 +28,6 @@ public class FriendRestController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FriendRestController.class);
     private final IFriendService friendService;
-    private final UserRepository userRepository;
 
     // Get a friend with the id given, for the user in the security context.
     @GetMapping("/{id}")
@@ -120,9 +117,23 @@ public class FriendRestController {
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}") // TODO
-    public ResponseEntity<FriendReadOnlyDTO> deleteFriendWithId(@PathVariable String id)
-            throws EntityNotFoundException {
-        return new ResponseEntity<>(friendService.deleteFriend(Long.parseLong(id)), HttpStatus.OK);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<FriendReadOnlyDTO> deleteFriendWithId(
+            @AuthenticationPrincipal User loggedInUser,
+            @PathVariable String id)
+            throws EntityNotFoundException, EntityInvalidArgumentException {
+
+        if (loggedInUser == null || !loggedInUser.isEnabled()) {
+            throw new EntityInvalidArgumentException("User", "Invalid user.");
+        }
+
+        if (!friendService.existsFriendIdToUsername(Long.parseLong(id), loggedInUser.getUsername())) {
+            throw new EntityNotFoundException("Friend", "User " + loggedInUser.getUsername()
+                    + " does not have a friend with id " + id);
+        }
+
+        FriendReadOnlyDTO deletedFriendDTO = friendService.deleteFriend(Long.parseLong(id));
+
+        return new ResponseEntity<>(deletedFriendDTO, HttpStatus.OK);
     }
 }
