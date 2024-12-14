@@ -1,13 +1,9 @@
-Replace id with uuid
-Get username from JWT instead of directly from client.
-Maybe I should not have role in UserReadOnlyDTO, user role is inside JWT.
-Improve authorization
-Change endpoint names
+Replace id with uuid.
 
 Add Indices in the database.
 
-Fix exception names and use cases
+Fix exception names and use cases.
 
-Create an Admin Controller
+Create an Admin Controller.
 
-Use Pagination
+Use Pagination.
