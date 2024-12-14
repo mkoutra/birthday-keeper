@@ -1,5 +1,6 @@
 package mkoutra.birthdaykeeper.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "jwtAuth")
 public class FriendRestController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FriendRestController.class);

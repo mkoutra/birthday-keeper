@@ -1,11 +1,17 @@
 package mkoutra.birthdaykeeper.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.UserNotAuthenticatedException;
 import mkoutra.birthdaykeeper.core.exceptions.ValidationException;
 import mkoutra.birthdaykeeper.dto.authDTOs.AuthenticationRequestDTO;
 import mkoutra.birthdaykeeper.dto.authDTOs.AuthenticationResponseDTO;
+import mkoutra.birthdaykeeper.dto.errorDTO.ErrorResponseDTO;
 import mkoutra.birthdaykeeper.security.authentication.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +26,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication Controller")
 public class AuthRestController {
     private final static Logger LOGGER = LoggerFactory.getLogger(AuthRestController.class);
     private final AuthenticationService authenticationService;
 
+    @Operation(
+            summary = "Authenticate a user",
+            description = "Authenticates a user using their credentials and returns a JWT token if successful."
+//            responses = {
+//                    @ApiResponse(
+//                            responseCode = "200",
+//                            description = "Authentication successful. Returns a JWT token.",
+//                            content = @Content(
+//                                    mediaType = "application/json",
+//                                    schema = @Schema(implementation = AuthenticationResponseDTO.class)
+//                            )
+//                    ),
+//                    @ApiResponse(
+//                            responseCode = "400",
+//                            description = "Invalid request. Validation errors in the provided credentials.",
+//                            content = @Content(
+//                                    mediaType = "application/json"
+//                            )
+//                    ),
+//                    @ApiResponse(
+//                            responseCode = "401",
+//                            description = "Authentication failed. User credentials are invalid.",
+//                            content = @Content(
+//                                    mediaType = "application/json",
+//                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+//                            )
+//                    )
+//            }
+    )
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponseDTO> authenticateUser(
             @Valid @RequestBody AuthenticationRequestDTO authenticationRequestDTO,

@@ -23,8 +23,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String json = "\"code\": \"userNotAuthenticated\", " +
-                      "\"description\": \"User must authenticate to access this endpoint.\"";
+        String json = "{\"code\": \"userNotAuthenticated\", " +
+                      "\"description\": \"User must authenticate to access this endpoint.\"}";
         response.getWriter().write(json);
     }
 }

@@ -56,6 +56,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/api/register/").permitAll()
                         .requestMatchers("/api/auth/authenticate").permitAll()
+                        .requestMatchers( "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers("/**").authenticated()                                                   // Authentication required for all other endpoints.
                 )
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->

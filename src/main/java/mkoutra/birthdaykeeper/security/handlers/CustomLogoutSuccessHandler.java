@@ -18,8 +18,8 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
                                 Authentication authentication)
             throws IOException, ServletException {
 
-        String json = "\"code\": \"LogoutSuccess\", " +
-                "\"description\": \"Logout was successful.\"";
+        String json = "{\"code\": \"LogoutSuccess\", " +
+                "\"description\": \"Logout was successful.\"}";
 
         response.setStatus(HttpServletResponse.SC_OK);  // 200
         response.setContentType("application/json");

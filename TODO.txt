@@ -7,3 +7,5 @@ Fix exception names and use cases.
 Create an Admin Controller.
 
 Use Pagination.
+
+Change exception handler
