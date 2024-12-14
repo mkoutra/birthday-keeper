@@ -44,7 +44,6 @@ public class SecurityConfiguration {
     // Configure the filters applied to each request
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // TODO: Add authorization filter
         http
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))  // Configure CORS
                 .csrf(AbstractHttpConfigurer::disable)                                                              // Disable CSRF. We use JWT, and we don't use session based security
@@ -53,7 +52,8 @@ public class SecurityConfiguration {
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.accessDeniedHandler(customAccessDeniedHandler()))               // Handle authorization exception
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/user/", "/api/auth/authenticate").permitAll()
+                        .requestMatchers("/api/register/").permitAll()
+                        .requestMatchers("/api/auth/authenticate").permitAll()
                         .requestMatchers("/**").authenticated()                                                   // Authentication required for all other endpoints.
                 )
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
