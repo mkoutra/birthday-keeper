@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.security.authentication.JwtAuthenticationFilter;
 import mkoutra.birthdaykeeper.security.handlers.CustomAccessDeniedHandler;
 import mkoutra.birthdaykeeper.security.handlers.CustomAuthenticationEntryPoint;
+import mkoutra.birthdaykeeper.security.handlers.CustomLogoutSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -14,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +24,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -59,8 +63,14 @@ public class SecurityConfiguration {
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless because we use jwt
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);                  // Insert jwt filter before authentication
-
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)                   // Insert jwt filter before authentication
+                .logout(logout -> logout
+                        .logoutUrl("/api/logout")   // We just change the URI of the logout. The default was /logout.
+                                                    // The default behavior is to clear SecurityContext and take care of other things:
+                                                    // https://docs.spring.io/spring-security/reference/servlet/authentication/logout.html
+                                                    // The default behavior is not changed. Only the URI.
+                        .logoutSuccessHandler(customLogoutSuccessHandler()) // Return a JSON to inform for the successful logout.
+                );
         return http.build();
     }
 
@@ -115,5 +125,10 @@ public class SecurityConfiguration {
     @Bean
     public AccessDeniedHandler customAccessDeniedHandler() {
         return new CustomAccessDeniedHandler();
+    }
+
+    @Bean
+    public LogoutSuccessHandler customLogoutSuccessHandler() {
+        return new CustomLogoutSuccessHandler();
     }
 }
