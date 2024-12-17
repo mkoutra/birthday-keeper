@@ -110,7 +110,7 @@ public class FriendRestController {
                 loggedInUser.getUsername(), friendInsertDTO.getLastname());
         FriendReadOnlyDTO friendReadOnlyDTO = friendService.saveFriend(friendInsertDTO, loggedInUser.getUsername());
 
-        return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
+        return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update a friend associated with the authenticated user.")

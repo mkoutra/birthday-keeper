@@ -37,6 +37,6 @@ public class RegisterRestController {
 
         UserReadOnlyDTO userReadOnlyDTO = userService.saveUser(userInsertDTO);
 
-        return new ResponseEntity<>(userReadOnlyDTO, HttpStatus.OK);
+        return new ResponseEntity<>(userReadOnlyDTO, HttpStatus.CREATED);
     }
 }
