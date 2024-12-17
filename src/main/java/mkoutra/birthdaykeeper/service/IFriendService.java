@@ -5,6 +5,7 @@ import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -26,4 +27,6 @@ public interface IFriendService {
     FriendReadOnlyDTO getFriendByIdAndUsername(Long id, String username) throws EntityNotFoundException;
 
     boolean existsFriendIdToUsername(Long friendId, String username);
+
+    Page<FriendReadOnlyDTO> getPaginatedFriends(int pageNo, int size, Long userId);
 }

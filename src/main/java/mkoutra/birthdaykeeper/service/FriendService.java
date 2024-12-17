@@ -14,6 +14,9 @@ import mkoutra.birthdaykeeper.repository.FriendRepository;
 import mkoutra.birthdaykeeper.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -266,5 +269,13 @@ public class FriendService implements IFriendService {
             LOGGER.error(e.getMessage());
             throw e;
         }
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    @Override
+    public Page<FriendReadOnlyDTO> getPaginatedFriends(int pageNo, int size, Long userId) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+
+        return friendRepository.findFriendsByUserId(userId, pageable).map(mapper::mapToFriendReadOnlyDTO);
     }
 }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityInvalidArgumentException;
@@ -16,6 +17,7 @@ import mkoutra.birthdaykeeper.model.User;
 import mkoutra.birthdaykeeper.service.IFriendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -72,6 +74,21 @@ public class FriendRestController {
         return new ResponseEntity<>(allUserFriends, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get paginated friends.")
+    @GetMapping("/paginated")   // TODO: Improve endpoint names
+    public ResponseEntity<Page<FriendReadOnlyDTO>> getPaginatedFriends(
+            @AuthenticationPrincipal User loggedInUser,
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "2") int size
+    ) {
+
+        if (loggedInUser == null || !loggedInUser.isEnabled()) {
+            throw new AccessDeniedException("User is either not authenticated or disabled.");
+        }
+
+        Page<FriendReadOnlyDTO> friendsPage = friendService.getPaginatedFriends(pageNo, size, loggedInUser.getId());
+        return new ResponseEntity<>(friendsPage, HttpStatus.OK);
+    }
 
     @Operation(summary = "Insert a friend for the authenticated user.")
     @PostMapping("/")

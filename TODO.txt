@@ -11,3 +11,5 @@ Use Pagination.
 Check efficiency of existsFriendIdToUsername()
 
 Modify PostMapping with produces and consumes, useful for swagger.
+
+Improve endpoint naming.
