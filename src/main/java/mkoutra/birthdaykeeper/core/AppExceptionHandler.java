@@ -55,12 +55,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(UserNotAuthenticatedException.class)
-    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    ResponseEntity<ErrorResponseDTO> handleUserNotAuthenticatedException(UserNotAuthenticatedException ex) {
-        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED);
-    }
-
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     ResponseEntity<ErrorResponseDTO> handleAccessDeniedException(AccessDeniedException ex) {

@@ -22,19 +22,22 @@ public class AuthenticationService {
     public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO authenticationRequestDTO)
             throws UserNotAuthenticatedException {
 
+        String username = authenticationRequestDTO.getUsername();
+        String password = authenticationRequestDTO.getPassword();
+
         // Use the authentication manager bean specified in the SecurityConfiguration class
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authenticationRequestDTO.getUsername(), authenticationRequestDTO.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(username, password));
 
         // Retrieve user from database
-        User user = userRepository.findUserByUsername(authenticationRequestDTO.getUsername()).orElseThrow(
-                () -> new UserNotAuthenticatedException("User", "User " + authenticationRequestDTO.getUsername() + " is not authenticated.")
-        );
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow( () -> new UserNotAuthenticatedException(
+                                "User with username: " + username + " is not authenticated."));
 
         // Generate the JWT token using the username and role
         String generatedToken = jwtService.generateToken(authentication.getName(), user.getRole().name());
 
-        return new AuthenticationResponseDTO(user.getUsername(), generatedToken);
+        return new AuthenticationResponseDTO(username, generatedToken);
     }
 }

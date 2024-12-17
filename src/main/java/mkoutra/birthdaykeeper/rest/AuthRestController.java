@@ -1,9 +1,6 @@
 package mkoutra.birthdaykeeper.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +8,6 @@ import mkoutra.birthdaykeeper.core.exceptions.UserNotAuthenticatedException;
 import mkoutra.birthdaykeeper.core.exceptions.ValidationException;
 import mkoutra.birthdaykeeper.dto.authDTOs.AuthenticationRequestDTO;
 import mkoutra.birthdaykeeper.dto.authDTOs.AuthenticationResponseDTO;
-import mkoutra.birthdaykeeper.dto.errorDTO.ErrorResponseDTO;
 import mkoutra.birthdaykeeper.security.authentication.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +34,8 @@ public class AuthRestController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponseDTO> authenticateUser(
             @Valid @RequestBody AuthenticationRequestDTO authenticationRequestDTO,
-            BindingResult bindingResult) throws ValidationException, UserNotAuthenticatedException {
+            BindingResult bindingResult)
+            throws ValidationException, UserNotAuthenticatedException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);

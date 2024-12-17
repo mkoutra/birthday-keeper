@@ -8,6 +8,6 @@ Create an Admin Controller.
 
 Use Pagination.
 
-Change exception handler
-
 Check efficiency of existsFriendIdToUsername()
+
+Modify PostMapping with produces and consumes, useful for swagger.

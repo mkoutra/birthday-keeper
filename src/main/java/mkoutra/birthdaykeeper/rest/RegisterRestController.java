@@ -1,7 +1,6 @@
 package mkoutra.birthdaykeeper.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +36,7 @@ public class RegisterRestController {
         }
 
         UserReadOnlyDTO userReadOnlyDTO = userService.saveUser(userInsertDTO);
+
         return new ResponseEntity<>(userReadOnlyDTO, HttpStatus.OK);
     }
 }

@@ -1,7 +1,6 @@
 package mkoutra.birthdaykeeper.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -19,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +41,10 @@ public class FriendRestController {
     public ResponseEntity<FriendReadOnlyDTO> getFriendForUser(
             @AuthenticationPrincipal User loggedInUser,
             @PathVariable String id)
-            throws EntityNotFoundException, EntityInvalidArgumentException {
+            throws EntityNotFoundException, AccessDeniedException {
 
         if (loggedInUser == null || !loggedInUser.isEnabled()) {
-            throw new EntityInvalidArgumentException("User", "Invalid user.");
+            throw new AccessDeniedException("User is either not authenticated or disabled.");
         }
 
         if (!friendService.existsFriendIdToUsername(Long.parseLong(id), loggedInUser.getUsername())) {
@@ -59,11 +59,12 @@ public class FriendRestController {
 
     @Operation(summary = "Get all friends of the authenticated user.")
     @GetMapping("/")
-    public ResponseEntity<List<FriendReadOnlyDTO>> getFriendsForUser(@AuthenticationPrincipal User loggedInUser)
-            throws EntityInvalidArgumentException, EntityNotFoundException {
+    public ResponseEntity<List<FriendReadOnlyDTO>> getFriendsForUser(
+            @AuthenticationPrincipal User loggedInUser)
+            throws AccessDeniedException, EntityNotFoundException {
 
         if (loggedInUser == null || !loggedInUser.isEnabled()) {
-            throw new EntityInvalidArgumentException("User", "Invalid user.");
+            throw new AccessDeniedException("User is either not authenticated or disabled.");
         }
 
         List<FriendReadOnlyDTO> allUserFriends = friendService.getAllFriendsForUser(loggedInUser.getUsername());
@@ -78,17 +79,18 @@ public class FriendRestController {
             @AuthenticationPrincipal User loggedInUser,
             @Valid @RequestBody FriendInsertDTO friendInsertDTO,
             BindingResult bindingResult)
-            throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
+            throws ValidationException, EntityAlreadyExistsException, AccessDeniedException, EntityNotFoundException {
 
         if (loggedInUser == null || !loggedInUser.isEnabled()) {
-            throw new EntityInvalidArgumentException("User", "Invalid user.");
+            throw new AccessDeniedException("User is either not authenticated or disabled.");
         }
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
         }
 
-        LOGGER.info("Username {} wants to insert friend with surname {}", loggedInUser.getUsername(), friendInsertDTO.getLastname());
+        LOGGER.info("Username {} wants to insert friend with surname {}",
+                loggedInUser.getUsername(), friendInsertDTO.getLastname());
         FriendReadOnlyDTO friendReadOnlyDTO = friendService.saveFriend(friendInsertDTO, loggedInUser.getUsername());
 
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
@@ -101,10 +103,11 @@ public class FriendRestController {
             @PathVariable String id,
             @Valid @RequestBody FriendUpdateDTO friendUpdateDTO,
             BindingResult bindingResult
-            ) throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException{
+            ) throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException,
+            EntityNotFoundException, AccessDeniedException {
 
         if (loggedInUser == null || !loggedInUser.isEnabled()) {
-            throw new EntityInvalidArgumentException("User", "Invalid user.");
+            throw new AccessDeniedException("User is either not authenticated or disabled.");
         }
 
         if (!id.equals(friendUpdateDTO.getId())) {
@@ -130,10 +133,10 @@ public class FriendRestController {
     public ResponseEntity<FriendReadOnlyDTO> deleteFriendWithId(
             @AuthenticationPrincipal User loggedInUser,
             @PathVariable String id)
-            throws EntityNotFoundException, EntityInvalidArgumentException {
+            throws EntityNotFoundException, AccessDeniedException {
 
         if (loggedInUser == null || !loggedInUser.isEnabled()) {
-            throw new EntityInvalidArgumentException("User", "Invalid user.");
+            throw new AccessDeniedException("User is either not authenticated or disabled.");
         }
 
         if (!friendService.existsFriendIdToUsername(Long.parseLong(id), loggedInUser.getUsername())) {
