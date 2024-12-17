@@ -34,31 +34,6 @@ public class AuthRestController {
     @Operation(
             summary = "Authenticate a user",
             description = "Authenticates a user using their credentials and returns a JWT token if successful."
-//            responses = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "Authentication successful. Returns a JWT token.",
-//                            content = @Content(
-//                                    mediaType = "application/json",
-//                                    schema = @Schema(implementation = AuthenticationResponseDTO.class)
-//                            )
-//                    ),
-//                    @ApiResponse(
-//                            responseCode = "400",
-//                            description = "Invalid request. Validation errors in the provided credentials.",
-//                            content = @Content(
-//                                    mediaType = "application/json"
-//                            )
-//                    ),
-//                    @ApiResponse(
-//                            responseCode = "401",
-//                            description = "Authentication failed. User credentials are invalid.",
-//                            content = @Content(
-//                                    mediaType = "application/json",
-//                                    schema = @Schema(implementation = ErrorResponseDTO.class)
-//                            )
-//                    )
-//            }
     )
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponseDTO> authenticateUser(

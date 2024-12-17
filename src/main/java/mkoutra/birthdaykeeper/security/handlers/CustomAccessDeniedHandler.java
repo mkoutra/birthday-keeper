@@ -16,15 +16,19 @@ import java.io.IOException;
  */
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
+    public void handle(HttpServletRequest request,
+                       HttpServletResponse response,
+                       AccessDeniedException accessDeniedException)
             throws IOException, ServletException {
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);   // 403 Forbidden
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String json = "{\"code\": \"userNotAuthenticated\", " +
-                      "\"description\": \"User must authenticate to access this endpoint.\"}";
+        String json = "{" +
+                          "\"code\": \"accessDenied\", " +
+                          "\"description\": \"" + accessDeniedException.getMessage() + "\"" +
+                      "}";
         response.getWriter().write(json);
     }
 }

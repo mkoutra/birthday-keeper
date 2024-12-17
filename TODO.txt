@@ -9,3 +9,5 @@ Create an Admin Controller.
 Use Pagination.
 
 Change exception handler
+
+Check efficiency of existsFriendIdToUsername()

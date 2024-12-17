@@ -49,10 +49,12 @@ public class SecurityConfiguration {
         http
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))  // Configure CORS
                 .csrf(AbstractHttpConfigurer::disable)                                                              // Disable CSRF. We use JWT, and we don't use session based security
-                .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint()))     // Handle authentication exception
-                .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer.accessDeniedHandler(customAccessDeniedHandler()))               // Handle authorization exception
+//                .exceptionHandling(exceptionHandlingConfigurer ->
+//                        exceptionHandlingConfigurer
+//                                .authenticationEntryPoint(customAuthenticationEntryPoint()))     // Handle authentication exception
+//                .exceptionHandling(exceptionHandlingConfigurer ->
+//                        exceptionHandlingConfigurer
+//                                .accessDeniedHandler(customAccessDeniedHandler()))               // Handle authorization exception
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/api/register/").permitAll()
                         .requestMatchers("/api/auth/authenticate").permitAll()

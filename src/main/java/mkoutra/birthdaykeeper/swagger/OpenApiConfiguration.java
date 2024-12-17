@@ -10,6 +10,12 @@ import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -49,5 +55,21 @@ import io.swagger.v3.oas.annotations.servers.Server;
         bearerFormat = "JWT",
         in = SecuritySchemeIn.HEADER
 )
+//@Configuration
 public class OpenApiConfiguration {
+//    @Bean
+//    public OpenAPI customOpenAPI() {
+//        OpenAPI openAPI = new OpenAPI();
+//
+//        // Manually add the logout endpoint to Swagger documentation
+//        openAPI.path(
+//                "/api/logout",
+//                new PathItem()
+//                        .post(new Operation()
+//                                .summary("Logout endpoint")
+//                                .description("Performs user logout and invalidates the session")
+//                        )
+//        );
+//        return openAPI;
+//    }
 }

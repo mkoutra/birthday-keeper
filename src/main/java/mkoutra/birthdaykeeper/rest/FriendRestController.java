@@ -1,6 +1,9 @@
 package mkoutra.birthdaykeeper.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
@@ -26,12 +29,14 @@ import java.util.List;
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "jwtAuth")
+@Tag(name = "Friend actions Controller",
+        description = "All methods use the authenticated user which is inside the security context.")
 public class FriendRestController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FriendRestController.class);
     private final IFriendService friendService;
 
-    // Get a friend with the id given, for the user in the security context.
+    @Operation(summary = "Retrieve a friend by ID for the authenticated user.")
     @GetMapping("/{id}")
     public ResponseEntity<FriendReadOnlyDTO> getFriendForUser(
             @AuthenticationPrincipal User loggedInUser,
@@ -52,7 +57,7 @@ public class FriendRestController {
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
 
-    // Get all friends of the user which is inside the security context.
+    @Operation(summary = "Get all friends of the authenticated user.")
     @GetMapping("/")
     public ResponseEntity<List<FriendReadOnlyDTO>> getFriendsForUser(@AuthenticationPrincipal User loggedInUser)
             throws EntityInvalidArgumentException, EntityNotFoundException {
@@ -67,7 +72,7 @@ public class FriendRestController {
     }
 
 
-    // Insert a Friend to the user which is inside the securityContext.
+    @Operation(summary = "Insert a friend for the authenticated user.")
     @PostMapping("/")
     public ResponseEntity<FriendReadOnlyDTO> insertFriend(
             @AuthenticationPrincipal User loggedInUser,
@@ -89,6 +94,7 @@ public class FriendRestController {
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
 
+    @Operation(summary = "Update a friend associated with the authenticated user.")
     @PutMapping("/{id}")
     public ResponseEntity<FriendReadOnlyDTO> updateFriend(
             @AuthenticationPrincipal User loggedInUser,
@@ -119,6 +125,7 @@ public class FriendRestController {
         return new ResponseEntity<>(friendReadOnlyDTO, HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete a friend of the authenticated user with the provided id.")
     @DeleteMapping("/{id}")
     public ResponseEntity<FriendReadOnlyDTO> deleteFriendWithId(
             @AuthenticationPrincipal User loggedInUser,

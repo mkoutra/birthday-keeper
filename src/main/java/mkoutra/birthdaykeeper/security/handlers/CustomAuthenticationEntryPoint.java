@@ -21,8 +21,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          AuthenticationException authException)
             throws IOException, ServletException {
 
-        String json = "{\"code\": \"userNotAuthenticated\", " +
-                      "\"description\": \"User must authenticate to access this endpoint.\"}";
+        String json = "{" +
+                        "\"code\": \"authenticationException\", " +
+                        "\"description\": \"" + authException.getMessage() + "\" " +
+                      "}";
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);    // 401 Unauthorized
         response.setContentType("application/json");

@@ -1,5 +1,8 @@
 package mkoutra.birthdaykeeper.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
@@ -18,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/register")
 @RequiredArgsConstructor
+@Tag(name = "User Registration Controller", description = "Insert a user in the database.")
 public class RegisterRestController {
 
     private final IUserService userService;
 
+    @Operation(summary = "Insert a user.")
     @PostMapping("/")
     public ResponseEntity<UserReadOnlyDTO> insertUser(
             @Valid @RequestBody UserInsertDTO userInsertDTO,
