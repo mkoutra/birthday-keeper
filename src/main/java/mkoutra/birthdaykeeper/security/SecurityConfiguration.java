@@ -52,13 +52,14 @@ public class SecurityConfiguration {
 //                .exceptionHandling(exceptionHandlingConfigurer ->
 //                        exceptionHandlingConfigurer
 //                                .authenticationEntryPoint(customAuthenticationEntryPoint()))     // Handle authentication exception
-//                .exceptionHandling(exceptionHandlingConfigurer ->
-//                        exceptionHandlingConfigurer
-//                                .accessDeniedHandler(customAccessDeniedHandler()))               // Handle authorization exception
+                .exceptionHandling(exceptionHandlingConfigurer ->
+                        exceptionHandlingConfigurer
+                                .accessDeniedHandler(customAccessDeniedHandler()))               // Handle authorization exception
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/api/register/").permitAll()
                         .requestMatchers("/api/auth/authenticate").permitAll()
                         .requestMatchers( "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
                         .requestMatchers("/**").authenticated()                                                   // Authentication required for all other endpoints.
                 )
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->

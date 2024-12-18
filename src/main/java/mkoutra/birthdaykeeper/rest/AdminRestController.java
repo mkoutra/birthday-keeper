@@ -3,7 +3,6 @@ package mkoutra.birthdaykeeper.rest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
 import mkoutra.birthdaykeeper.dto.userDTOs.UserReadOnlyDTO;

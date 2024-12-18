@@ -26,7 +26,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setCharacterEncoding("UTF-8");
 
         String json = "{" +
-                          "\"code\": \"accessDenied\", " +
+                          "\"code\": \"AccessDenied\", " +
                           "\"description\": \"" + accessDeniedException.getMessage() + "\"" +
                       "}";
         response.getWriter().write(json);

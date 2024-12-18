@@ -4,7 +4,6 @@ import mkoutra.birthdaykeeper.core.exceptions.*;
 import mkoutra.birthdaykeeper.dto.errorDTO.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -55,12 +54,12 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(code = HttpStatus.FORBIDDEN)
-    ResponseEntity<ErrorResponseDTO> handleAccessDeniedException(AccessDeniedException ex) {
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO("AccessDenied", ex.getMessage());
-        return new ResponseEntity<>(errorResponseDTO, HttpStatus.FORBIDDEN);
-    }
+//    @ExceptionHandler(AccessDeniedException.class)
+//    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+//    ResponseEntity<ErrorResponseDTO> handleAccessDeniedException(AccessDeniedException ex) {
+//        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO("AccessDenied", ex.getMessage());
+//        return new ResponseEntity<>(errorResponseDTO, HttpStatus.FORBIDDEN);
+//    }
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
@@ -80,24 +79,4 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(ex.getCode(), ex.getMessage());
         return new ResponseEntity<>(errorResponseDTO, status);
     }
-
-//    @ExceptionHandler(EntityGenericException.class)
-//    ResponseEntity<ErrorResponseDTO> handleEntityGenericException(EntityGenericException ex) {
-//        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(ex.getCode(), ex.getMessage());
-//        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-//
-//        if (ex instanceof AppServerException) {
-//            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-//        } else if (ex instanceof EntityAlreadyExistsException) {
-//            httpStatus = HttpStatus.CONFLICT;
-//        } else if (ex instanceof EntityInvalidArgumentException) {
-//            httpStatus = HttpStatus.BAD_REQUEST;
-//        } else if (ex instanceof EntityNotFoundException) {
-//            httpStatus = HttpStatus.NOT_FOUND;
-//        } else if (ex instanceof UserNotAuthenticatedException) {
-//            httpStatus = HttpStatus.UNAUTHORIZED;
-//        }
-//
-//        return new ResponseEntity<>(errorResponseDTO, httpStatus);
-//    }
 }
