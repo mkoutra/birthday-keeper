@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityInvalidArgumentException;
@@ -60,7 +59,7 @@ public class FriendRestController {
     }
 
     @Operation(summary = "Get all friends of the authenticated user.")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<FriendReadOnlyDTO>> getFriendsForUser(
             @AuthenticationPrincipal User loggedInUser)
             throws AccessDeniedException, EntityNotFoundException {
@@ -91,7 +90,7 @@ public class FriendRestController {
     }
 
     @Operation(summary = "Insert a friend for the authenticated user.")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<FriendReadOnlyDTO> insertFriend(
             @AuthenticationPrincipal User loggedInUser,
             @Valid @RequestBody FriendInsertDTO friendInsertDTO,

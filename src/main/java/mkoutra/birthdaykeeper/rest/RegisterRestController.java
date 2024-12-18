@@ -26,7 +26,7 @@ public class RegisterRestController {
     private final IUserService userService;
 
     @Operation(summary = "Insert a user.")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<UserReadOnlyDTO> insertUser(
             @Valid @RequestBody UserInsertDTO userInsertDTO,
             BindingResult bindingResult) throws ValidationException, EntityAlreadyExistsException {
