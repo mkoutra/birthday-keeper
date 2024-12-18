@@ -1,7 +1,7 @@
 package mkoutra.birthdaykeeper.mapper;
 
 import lombok.RequiredArgsConstructor;
-import mkoutra.birthdaykeeper.core.enums.Role;
+import mkoutra.birthdaykeeper.core.utils.DateDifferenceUtil;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
@@ -41,12 +41,16 @@ public class Mapper {
     }
 
     public FriendReadOnlyDTO mapToFriendReadOnlyDTO(Friend friend) {
+        // Calculate days until next Birthday
+        long daysUntilNextBirthday = DateDifferenceUtil.getDaysUntilNextBirthday(friend.getDateOfBirth());
+
         return new FriendReadOnlyDTO(
                 friend.getId().toString(),
                 friend.getFirstname(),
                 friend.getLastname(),
                 friend.getNickname(),
-                friend.getDateOfBirth()
+                friend.getDateOfBirth(),
+                Long.toString(daysUntilNextBirthday)
         );
     }
 

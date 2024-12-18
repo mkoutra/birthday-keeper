@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -271,11 +272,19 @@ public class FriendService implements IFriendService {
         }
     }
 
+    /**
+     * Retrieve the page of friends for the user with the specified ID.
+     *
+     * @param pageNo    The page number, starting from 0.
+     * @param size      The number of elements per page.
+     * @param userId    The ID of the user whose friends are to be retrieved.
+     * @return          The Page object containing FriendReadOnlyDTO instances.
+     */
     @Transactional(rollbackOn = Exception.class)
     @Override
     public Page<FriendReadOnlyDTO> getPaginatedFriends(int pageNo, int size, Long userId) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-
+        String defaultSort = "id";
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(defaultSort).ascending());
         return friendRepository.findFriendsByUserId(userId, pageable).map(mapper::mapToFriendReadOnlyDTO);
     }
 }

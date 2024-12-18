@@ -15,4 +15,5 @@ public class FriendReadOnlyDTO {
     private String lastname;
     private String nickname;
     private LocalDate dateOfBirth;
+    private String daysUntilNextBirthday;
 }

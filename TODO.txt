@@ -6,10 +6,12 @@ Fix exception names and use cases.
 
 Create an Admin Controller.
 
-Use Pagination.
-
 Check efficiency of existsFriendIdToUsername()
 
 Modify PostMapping with produces and consumes, useful for swagger.
 
 Improve endpoint naming.
+
+Add sorting and filtering in pagination.
+
+Add a service to retrieve friends by the month they were born.
