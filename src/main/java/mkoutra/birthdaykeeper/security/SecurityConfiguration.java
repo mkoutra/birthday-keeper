@@ -47,8 +47,9 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))  // Configure CORS
-                .csrf(AbstractHttpConfigurer::disable)                                                              // Disable CSRF. We use JWT, and we don't use session based security
+                .cors(httpSecurityCorsConfigurer ->
+                        httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))  // Configure CORS
+                .csrf(AbstractHttpConfigurer::disable)                                              // Disable CSRF. We use JWT, and we don't use session based security
 //                .exceptionHandling(exceptionHandlingConfigurer ->
 //                        exceptionHandlingConfigurer
 //                                .authenticationEntryPoint(customAuthenticationEntryPoint()))     // Handle authentication exception
@@ -56,7 +57,7 @@ public class SecurityConfiguration {
                         exceptionHandlingConfigurer
                                 .accessDeniedHandler(customAccessDeniedHandler()))               // Handle authorization exception
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/register/").permitAll()
+                        .requestMatchers("/api/register").permitAll()
                         .requestMatchers("/api/auth/authenticate").permitAll()
                         .requestMatchers( "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
