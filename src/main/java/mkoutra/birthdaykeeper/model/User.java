@@ -14,7 +14,8 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        indexes = @Index(name = "Idx_User_username", columnList = "username", unique = true))   // not sure if it is necessary. An index for username was automatically created by the db, probably due to the unique=true @Column field
 public class User extends AbstractEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

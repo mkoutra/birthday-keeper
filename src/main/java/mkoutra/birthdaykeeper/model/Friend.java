@@ -30,7 +30,7 @@ public class Friend extends AbstractEntity {
     private LocalDate dateOfBirth;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id")   // Based on the database, an index for user_id was automatically created
     private User user;
 
     @Override

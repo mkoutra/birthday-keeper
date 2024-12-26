@@ -35,7 +35,7 @@ public abstract class AbstractEntity implements Serializable {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(unique = true, updatable = false)
+    @Column(unique = true, updatable = false)   // An index for uuid was in the database automatically
     private String uuid;
 
     @PrePersist
