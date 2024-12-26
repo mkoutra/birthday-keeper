@@ -22,9 +22,9 @@ public class Mapper {
 
     public Friend mapToFriend(FriendInsertDTO dto) {
         Friend friend = new Friend();
-        friend.setFirstname(dto.getFirstname());
-        friend.setLastname(dto.getLastname());
-        friend.setNickname(dto.getNickname());
+        friend.setFirstname(dto.getFirstname().trim());
+        friend.setLastname(dto.getLastname().trim());
+        friend.setNickname(dto.getNickname().trim());
         friend.setDateOfBirth(dto.getDateOfBirth());
         return friend;
     }
@@ -32,9 +32,9 @@ public class Mapper {
     public Friend mapToFriend(FriendUpdateDTO dto) {
         return new Friend(
                 Long.parseLong(dto.getId()),
-                dto.getFirstname(),
-                dto.getLastname(),
-                dto.getNickname(),
+                dto.getFirstname().trim(),
+                dto.getLastname().trim(),
+                dto.getNickname().trim(),
                 dto.getDateOfBirth(),
                 null
         );
@@ -60,7 +60,7 @@ public class Mapper {
 
     public User mapToUser(UserInsertDTO userInsertDTO) {
         User user = new User();
-        user.setUsername(userInsertDTO.getUsername());
+        user.setUsername(userInsertDTO.getUsername().trim());
         user.setPassword(passwordEncoder.encode(userInsertDTO.getPassword()));  // Hash password with BCrypt
         user.setRole(userInsertDTO.getRole());
         return user;
