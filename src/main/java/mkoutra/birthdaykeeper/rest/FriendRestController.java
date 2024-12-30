@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mkoutra.birthdaykeeper.core.Paginated;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityInvalidArgumentException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
@@ -75,17 +76,17 @@ public class FriendRestController {
 
     @Operation(summary = "Get paginated friends.")
     @GetMapping("/paginated")   // TODO: Improve endpoint names
-    public ResponseEntity<Page<FriendReadOnlyDTO>> getPaginatedFriends(
+    public ResponseEntity<Paginated<FriendReadOnlyDTO>> getPaginatedFriends(
             @AuthenticationPrincipal User loggedInUser,
             @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "2") int size
+            @RequestParam(defaultValue = "5") int size
     ) {
 
         if (loggedInUser == null || !loggedInUser.isEnabled()) {
             throw new AccessDeniedException("User is either not authenticated or disabled.");
         }
 
-        Page<FriendReadOnlyDTO> friendsPage = friendService.getPaginatedFriends(pageNo, size, loggedInUser.getId());
+        Paginated<FriendReadOnlyDTO> friendsPage = friendService.getPaginatedFriends(pageNo, size, loggedInUser.getId());
         return new ResponseEntity<>(friendsPage, HttpStatus.OK);
     }
 

@@ -2,6 +2,7 @@ package mkoutra.birthdaykeeper.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import mkoutra.birthdaykeeper.core.Paginated;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
@@ -189,7 +190,8 @@ public class FriendService implements IFriendService {
 
             friendToDelete.getUser().removeFriend(friendToDelete);
             friendRepository.deleteById(id);
-
+            LOGGER.info("Friend: {} {} deleted successfully.",
+                    friendToDelete.getFirstname(), friendToDelete.getLastname());
             return friendReadOnlyDTO;
         } catch (EntityNotFoundException e) {
             LOGGER.error("Friend Error: Friend with id {} was not deleted.", id);
@@ -278,13 +280,14 @@ public class FriendService implements IFriendService {
      * @param pageNo    The page number, starting from 0.
      * @param size      The number of elements per page.
      * @param userId    The ID of the user whose friends are to be retrieved.
-     * @return          The Page object containing FriendReadOnlyDTO instances.
+     * @return          A {@link Paginated} object containing FriendReadOnlyDTO instances
+     *                  and selected page information.
      */
     @Transactional(rollbackOn = Exception.class)
     @Override
-    public Page<FriendReadOnlyDTO> getPaginatedFriends(int pageNo, int size, Long userId) {
+    public Paginated<FriendReadOnlyDTO> getPaginatedFriends(int pageNo, int size, Long userId) {
         String defaultSort = "id";
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(defaultSort).ascending());
-        return friendRepository.findFriendsByUserId(userId, pageable).map(mapper::mapToFriendReadOnlyDTO);
+        return new Paginated<>(friendRepository.findFriendsByUserId(userId, pageable).map(mapper::mapToFriendReadOnlyDTO));
     }
 }

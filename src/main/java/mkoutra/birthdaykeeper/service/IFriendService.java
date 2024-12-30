@@ -1,11 +1,11 @@
 package mkoutra.birthdaykeeper.service;
 
+import mkoutra.birthdaykeeper.core.Paginated;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendInsertDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendReadOnlyDTO;
 import mkoutra.birthdaykeeper.dto.friendDTOs.FriendUpdateDTO;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -28,5 +28,5 @@ public interface IFriendService {
 
     boolean existsFriendIdToUsername(Long friendId, String username);
 
-    Page<FriendReadOnlyDTO> getPaginatedFriends(int pageNo, int size, Long userId);
+    Paginated<FriendReadOnlyDTO> getPaginatedFriends(int pageNo, int size, Long userId);
 }
