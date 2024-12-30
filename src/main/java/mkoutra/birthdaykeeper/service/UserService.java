@@ -2,6 +2,7 @@ package mkoutra.birthdaykeeper.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import mkoutra.birthdaykeeper.core.Paginated;
 import mkoutra.birthdaykeeper.core.exceptions.EntityAlreadyExistsException;
 import mkoutra.birthdaykeeper.core.exceptions.EntityNotFoundException;
 import mkoutra.birthdaykeeper.dto.userDTOs.UserChangePasswordDTO;
@@ -12,7 +13,6 @@ import mkoutra.birthdaykeeper.model.User;
 import mkoutra.birthdaykeeper.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,10 +41,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Page<UserReadOnlyDTO> getPaginatedUsers(int pageNo, int size) {
+    public Paginated<UserReadOnlyDTO> getPaginatedUsers(int pageNo, int size) {
         String defaultSorting = "id";
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(defaultSorting).ascending());
-        return userRepository.findAll(pageable).map(mapper::mapToUserReadOnlyDTO);
+        return new Paginated<>(userRepository.findAll(pageable).map(mapper::mapToUserReadOnlyDTO));
     }
 
     @Override
