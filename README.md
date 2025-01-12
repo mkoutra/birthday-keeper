@@ -26,11 +26,11 @@ Instead of setting up a local environment (as described in the next section), yo
 3. **Build the JAR**:
 - For **Linux/macOS**:
     ```bash
-    ./gradlew clean build
+    ./gradlew clean build -x test
     ```
 - For **Windows**:
   ```shell
-    gradlew.bat clean build
+    gradlew.bat clean build -x test
   ```
 4. **Start the database service**:
    ```bash
