@@ -1,0 +1,24 @@
+version: '3.3'
+services:
+  mysql-db:
+    image: mysql:8.0.39
+    container_name: mysql-container
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=birthdaykeeperdb
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=12345
+  spring-backend:
+    build: .
+    ports:
+      - "8080:8080"
+    container_name: spring-backend-container
+    depends_on:
+      - mysql-db
+    environment:
+      - MYSQL_HOST=mysql-db
+      - MYSQL_PORT=3306
+      - MYSQL_DB=birthdaykeeperdb
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=12345

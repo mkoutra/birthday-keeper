@@ -11,9 +11,49 @@ to manage their friends' birthdays effectively. With this app, users can:
 The app integrates with a MySQL database for persistent data storage 
 and provides Swagger-based API documentation for easy testing and exploration.
 
+## Docker instructions
+
+**Instructions for Using Docker**
+
+Instead of setting up a local environment (as described in the next section), you can use Docker to run the application:
+
+1. **Ensure prerequisites**: Install Docker and `docker-compose` on your system.
+2. **Clone the repository**:
+   ```shell
+    git clone https://github.com/mkoutra/birthday-keeper
+    cd birthday-keeper
+    ```
+3. **Build the JAR**:
+- For **Linux/macOS**:
+    ```bash
+    ./gradlew clean build
+    ```
+- For **Windows**:
+  ```shell
+    gradlew.bat clean build
+  ```
+4. **Start the database service**:
+   ```bash
+    docker-compose up mysql-db
+   ```
+   **Wait** for the database to fully initialize (~1 minute).
+5. **Start the Spring REST app** in a (different terminal):
+   ```bash
+    docker-compose up spring-backend
+   ```
+
+**Shut Down the Services**
+
+   To stop and remove the containers, close each terminal running the services,
+   then run the following command in your project directory:
+   ```bash
+    docker-compose down 
+   ```
+   This will cleanly stop and remove all the containers created by docker-compose.
+
 ## Requirements
 
-To run this application, ensure the following are installed:
+To run this application, **without Docker**, ensure the following are installed:
 
 - **Java 17+**: Required to run the Spring Boot application.
 - **MySQL**: Used as the database for storing user and birthday information.
