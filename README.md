@@ -17,7 +17,7 @@ and provides Swagger-based API documentation for easy testing and exploration.
 
 Instead of setting up a local environment (as described in the next section), you can use Docker to run the application:
 
-1. **Ensure prerequisites**: Install Docker and `docker-compose` on your system.
+1. **Ensure prerequisites**: Install Java 17+, Docker and `docker-compose` on your system.
 2. **Clone the repository**:
    ```shell
     git clone https://github.com/mkoutra/birthday-keeper
